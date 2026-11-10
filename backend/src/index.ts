@@ -32,13 +32,18 @@ const allowedStatuses: Status[] = [
 
 const app = new Hono<{ Bindings: Bindings }>()
 
-// Allow requests from the deployed frontend
+// CORS configuration
 app.use(
   '/api/*',
   cors({
-    origin: 'https://applytrack-frontend.pages.dev',
+    origin: (origin) => {
+      const allowedOrigin =
+        /^https:\/\/([a-z0-9-]+\.)?applytrack-frontend\.pages\.dev$/
+
+      return allowedOrigin.test(origin) ? origin : ''
+    },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type'],
+    allowHeaders: ['Content-Type', 'Authorization'],
   })
 )
 
